@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <title>
+        How to publish a GPG key via DNS
+        | Albert De La Fuente
+    </title>
+    <!-- >    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
+     -->
+        <link href="/media/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/media/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/media/css/animate.css" rel="stylesheet">
+    <link href="/media/css/style.css" rel="stylesheet">
+    <link href="/media/css/style-custom.css" rel="stylesheet">
+    <link href="/media/css/pygments.css" rel="stylesheet">
+    <link href="/media/css/flag-icon.min.css" rel="stylesheet">
+        
+        <link href="/en/blog/2015/2015-11-12-hyde-multilanguage-sites-config.html" rel="prev">
+            <link href="/en/blog/2016/2016-11-22-manually-boot-luks-on-lvm.html" rel="next">
+    
+        <link rel="alternate" type="application/rss+xml"
+          href="/blog/index.xml" title="albert:/dev/blog">
+    
+            <meta property="og:title" content="How to publish a GPG key via DNS">
+    <meta property="og:description" content="Publishing keys is quite common. One nice way to do so is by using the Public Key Association (PKA) DNS record. Basically this is a record that points to a file that can be downloaded over the …">
+    <meta property="og:image" content="http://www.albertdelafuente.com/media/images/blog/2016/snowden-pgp.jpg">
+
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:site" content="@vonpupp"/>
+    <meta name="twitter:image:src" content='http://www.albertdelafuente.com/media/images/blog/2016/snowden-pgp.jpg'/>
+    <meta name="twitter:title" content="How to publish a GPG key via DNS"/>
+    <meta name="twitter:domain" content="albertdelafuente.com"/>
+    <meta name="twitter:description" content="Publishing keys is quite common. One nice way to do so is by using the Public Key Association (PKA) DNS record. Basically this is a record that points to a file that can be downloaded over the …"/>
+                <script type="text/javascript">
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-27656036-2', 'auto', {'allowLinker': true});
+      ga('send', 'pageview');
+    </script>
+          </head>
+  <body class="archive">
+        <!-- HEADER -->
+    
+    <header class="header header-dark no-sticky">
+      <nav class="navbar container">
+	<div class="navbar-header">
+          <button class="navbar-toggle collapsed" data-target="#navbar" data-toggle="collapse" type="button">
+	    <span class="icon-bar"></span>
+	    <span class="icon-bar"></span>
+	    <span class="icon-bar"></span>
+	  </button>
+	  <a class="navbar-brand" href="/">
+            <img src="/media/images/about/me.jpg"
+                 class="img-circle img-thumbnail"
+                 alt="Albert De La Fuente">
+            Albert De La Fuente
+          </a>
+        </div>
+	<div id="navbar" class="navbar-collapse collapse">
+	  <ul class="nav navbar-nav pull-right">
+                                                                        <li>
+              <a href="/en/about">
+                                <span class="glyphicon glyphicon-user"></span>
+                                About
+              </a>
+            </li>
+                                    <li class="active">
+              <a href="/en/blog">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                                Blog
+              </a>
+            </li>
+                                    <li>
+              <a href="/en/tags">
+                                
+              </a>
+            </li>
+            <!--    <li>
+    <div id="lf-menubar">
+      <form id="lf-search" action="//www.google.com/search">
+        <i id="lf-search-glass"><input type="submit" class="lf-sprite-search" value=""></i>
+        <input type="hidden" name="hl" value="en">
+	    <input type="hidden" name="q"  value="site:albertdelafuente.com/en/*">
+	    <input id="lf-search-query" type="text" name="q" value="">
+      </form>
+    </div>
+    </li> -->
+          </ul>
+	</div>
+
+  
+      </nav>
+    </header>
+
+<!--  vim: set filetype=htmldjango: -->    <!-- /.header -->
+
+    <!-- WRAPPER -->
+    <div class="wrapper">
+
+                  <div class="headcontent headcontent-md bg-sl-center overlay"
+           style="background-image: url('/media/images/blog/2016/snowden-pgp.jpg');">
+	<div class="container inforow">
+	  <div class="col-sm-10">
+	    <h1 class="white">
+                  How to publish a GPG key via DNS
+                  </h1>
+	  </div>
+	  <div class="col-sm-2 text-right">
+	    <ol class="breadcrumb breadcrumb-arrow">
+                                                                                                  <li>
+                <a href="/en/blog">
+                                    Blog
+                </a>
+              </li>
+                                                        <li class="active">
+                <a href="/en/blog/2016">
+                                    2016
+                </a>
+              </li>
+                            	    </ol>
+          </div>
+        </div>
+      </div>
+
+        <div class="container post">
+    <header class="entry-header">
+      <div class="meta">
+        <small><i class="fa fa-calendar"></i>Sunday 13 November 2016</small>
+        <small>
+          <i class="fa fa-folder"></i>
+                                            <a href="/en/tags/gpg.html">
+            GPG</a>
+                              </small>
+                <a href="http://www.albertdelafuente.com/en/blog/2016/2016-11-13-gpg-pka-howto.html#disqus_thread">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+                <span>
+          <i class="fa fa-user-plus"></i> 
+        </span>
+                <div class="addthis_horizontal_follow_toolbox"
+             style="margin-top: -25px;
+             margin-left: -25px;">
+        </div>
+              </div>
+    </header>
+    <div class="entry-content padding-bottom">
+            <h2>Intro</h2>
+<p>Publishing keys is quite common. One nice way to do so is by using the Public
+Key Association (PKA) DNS record. Basically this is a record that points to a
+file that can be downloaded over the internet. This method is an alternative
+(not exclusive) to using keyservers.</p>
+<p>One of the problems of keyservers (in my opinion), is the problem of deleting
+old keys. I pretty much like the idea of PGP keyserver which verifies
+periodically by sending an email if the address is still in use and therefore
+maintain that <code>uid</code> of the key. The only problem is that the PGP server is
+centralized and it does not use FLOSS standards.</p>
+<p>I understand that deleting a key on a distributed environment is hard and
+probably maintaining a history of deletions as done actually on most of
+keyservers is still a good solution. However since I don't use GPG very often
+and I am not publishing my key yet, I wanted to try PKA.</p>
+<p>This tutorial is made of two basic parts, first creating a TXT DNS record and
+then verifying that the key gets downloaded properly.</p>
+<h2>Tutorial overview</h2>
+<ol>
+<li>Creating the TXT DNS record</li>
+<li>Testing the PKA record</li>
+</ol>
+<h2>Assumptions</h2>
+<p>I assume that you have gpg installed and that you know the basic idea on how it
+works, that you know what a private and a public keys are for and how to use
+them.</p>
+<h2>Creating the TXT DNS record</h2>
+<p>To create the TXT DNS record you will need to know the fingerprint of the key.
+To do so:</p>
+<div class="highlight"><pre><span></span>$ gpg --list-keys vonpupp@keybase.io<br />pub   rsa2048/0x536814BF4871A220 2016-11-12 <span class="o">[</span>SC<span class="o">]</span> <span class="o">[</span>expires: 2018-11-12<span class="o">]</span><br />      Key <span class="nv">fingerprint</span> <span class="o">=</span> F0B9 B3FB 25E9 <span class="m">1209</span> 728E  <span class="m">4844</span> <span class="m">5368</span> 14BF <span class="m">4871</span> A220<br />      uid                   <span class="o">[</span>ultimate<span class="o">]</span> Albert De La Fuente &lt;vonpupp@keybase.io&gt;<br />      uid                   <span class="o">[</span>ultimate<span class="o">]</span> Albert De La Fuente <span class="o">(</span>Social email address<span class="o">)</span> &lt;vonpupp@gmail.com&gt;<br />      uid                   <span class="o">[</span>ultimate<span class="o">]</span> Albert De La Fuente <span class="o">(</span>Main email address<span class="o">)</span> &lt;mail@albertdelafuente.com&gt;<br />      uid                   <span class="o">[</span>ultimate<span class="o">]</span> Albert De La Fuente <span class="o">(</span>Haevas email address<span class="o">)</span> &lt;albert@haevas.com&gt;<br />      uid                   <span class="o">[</span>ultimate<span class="o">]</span> Albert De La Fuente <span class="o">(</span>Academic email address<span class="o">)</span> &lt;albert@ime.usp.br&gt;<br />      sub   rsa2048/0xE2977BF3F82AB971 2016-11-12 <span class="o">[</span>E<span class="o">]</span> <span class="o">[</span>expires: 2018-11-12<span class="o">]</span><br /></pre></div>
+
+<p><br />
+In my case, the fingerprint is <em>F0B9 B3FB 25E9 1209 728E  4844 5368 14BF 4871
+A220</em>, or <em>0x536814BF4871A220</em> for short.</p>
+<p>Then you need to export the key with:</p>
+<div class="highlight"><pre><span></span>$ gpg --export -a 0x536814BF4871A220 &gt; public-0x536814BF4871A220.asc<br /></pre></div>
+
+<p><br />
+Then create a TXT record where:
+* The <code>Name</code> part:</p>
+<p>Is composed of <code>mailbox</code>._pka.albertdelafuente.com. So for
+  instance if my email is <code>long-anti-spam-email-address@albertdelafuentedotcom</code>,
+  then the name part should be
+  <code>long-anti-spam-email-address._pka.albertdelafuente.com</code>.</p>
+<ul>
+<li>The <code>Text</code> data:</li>
+</ul>
+<p>Contains the <code>fingerprint</code> and the <code>URL</code> where to download the key. In my case:</p>
+<p><div class="highlight"><pre><span></span><span class="s2">&quot;v=pka1;fpr=F0B9B3FB25E91209728E4844536814BF4871A220;uri=http://albertdelafuente.com/media/files/public-0x536814BF4871A220.asc&quot;</span><br /></pre></div><br />
+Do not forget to upload the key to match the <code>uri</code> as on the TXT record. In my case:
+http://albertdelafuente.com/media/files/public-0x536814BF4871A220.asc</p>
+<h2>Testing the PKA record</h2>
+<p>Once done that you can download the key (just for testing purposes) on another computer or VM as follows:</p>
+<div class="highlight"><pre><span></span>$ <span class="nb">echo</span> <span class="s2">&quot;Test message&quot;</span> <span class="p">|</span> gpg --auto-key-locate pka -ear mail@albertdelafuente.com<br /></pre></div>
+
+<p><br />
+In my case this will prompt you with a confirmation since my primary uid does
+not match the email. This is made in purpose because I have read that some
+spammers are using keyservers to get valid email addresses, therefore I always
+use keybase as my primary id.</p>
+<p>You will see something similar to this as the output:</p>
+<div class="highlight"><pre><span></span>gpg: directory <span class="sb">`</span>/home/vagrant/.gnupg<span class="s1">&#39; created</span><br /><span class="s1">gpg: new configuration file `/home/vagrant/.gnupg/gpg.conf&#39;</span> created<br />gpg: WARNING: options in <span class="sb">`</span>/home/vagrant/.gnupg/gpg.conf<span class="s1">&#39; are not yet active during this run</span><br /><span class="s1">gpg: keyring `/home/vagrant/.gnupg/secring.gpg&#39;</span> created<br />gpg: keyring <span class="sb">`</span>/home/vagrant/.gnupg/pubring.gpg<span class="s1">&#39; created</span><br /><span class="s1">gpg: requesting key 4871A220 from http server albertdelafuente.com</span><br /><span class="s1">gpg: /home/vagrant/.gnupg/trustdb.gpg: trustdb created</span><br /><span class="s1">gpg: key 4871A220: public key &quot;Albert De La Fuente &lt;vonpupp@keybase.io&gt;&quot; imported</span><br /><span class="s1">gpg: Total number processed: 1</span><br /><span class="s1">gpg:               imported: 1  (RSA: 1)</span><br /><span class="s1">gpg: automatically retrieved `mail@albertdelafuente.com&#39;</span> via PKA<br />gpg: F82AB971: There is no assurance this key belongs to the named user<br />&nbsp;<br />pub  2048R/F82AB971 2016-11-12 Albert De La Fuente &lt;vonpupp@keybase.io&gt;<br /> Primary key fingerprint: F0B9 B3FB 25E9 <span class="m">1209</span> 728E  <span class="m">4844</span> <span class="m">5368</span> 14BF <span class="m">4871</span> A220<br />      Subkey fingerprint: 7A10 07B4 3F49 <span class="m">5317</span> 5DE0  52E8 E297 7BF3 F82A B971<br />&nbsp;<br />It is NOT certain that the key belongs to the person named<br />in the user ID.  If you *really* know what you are doing,<br />you may answer the next question with yes.<br />&nbsp;<br />Use this key anyway? <span class="o">(</span>y/N<span class="o">)</span> y<br />-----BEGIN PGP MESSAGE-----<br />Version: GnuPG v1<br />&nbsp;<br />hQEMA+KXe/P4KrlxAQf/d1yxYFBSPs0RKHJ98w+s82jK25R/IXCiFNe6BkX+oyp+<br />uh+4AObx93SuJ/ryHlthHQmnpid4BQWmhmCksiAH+xD1xrlrCDIsNQfJ5+aPQXjz<br />+Z6iKrWy8Lk13i6u3wgMZuk2eKN9Z1ppi15arXhFc93cta5p5K5tAH7CwMd5zP93<br />r7wgI2Jff+x3erN0zbkJ2PZgDrHZVLVWyOnwgRBw12N8El3L8i6JFbNY+g25AMUm<br />MMCPSTit8ILsFoPtkrJEOdq5p5aCw3dvIVSzmxflMJEsgqO+Per+KxtMehaBF5qX<br />I2TzltcgjlisSJ3rcBtjpm12rSVJrPs4BG2UKz0w6tJIAbF0FLlWXe8zMJMK1E3Q<br />BQ7y/gjTduiuuD++qyIxqWCoLCgHixvP4WiTPbbKvoXl4BP8Bf1ED9M/0Cyss2NI<br /><span class="nv">tW7vVlLcXRQb</span><br /><span class="o">=</span>gdKa<br />-----END PGP MESSAGE-----<br /></pre></div>
+
+<p><br /></p>
+<h2>Conclusions</h2>
+<p>As you can see it is not that hard to publish a public key via DNS. You need to
+export your key to a file and upload it and then create a TXT record relating
+the fingerprint and the location of the key. You may also publish your key on a
+keyserver also since not everybody retrieve the keys over DNS.</p>
+<p>Thanks for reading. Spot an error or want to explain something better, feel
+free to send me a PR.</p>
+<!--  vim: set spell: -->
+
+<!--  vim: set spelllang=en: -->
+
+<!--  vim: set filetype=htmldjango: -->          </div>
+
+      </div>
+
+  <div id="subscribe" class="newsletter bg-sl-center overlay overlay-light"
+       style="background-image: url('/media/images/services/photo-notepad.jpg');">
+    <div class="container inforow middle">
+      <div class="col-sm-6">
+	<p>Get notified of my next blog post</p>
+      </div>
+      <div class="col-sm-6">
+	<div id="feedback-form">
+	  <form action="//albertdelafuente.us12.list-manage.com/subscribe/post?u=2078b40de4d18256fef954d6e&amp;id=bdd2d44f54" method="post">
+	    <input name="EMAIL" placeholder="Enter your email address" required type="email">
+	    <button type="submit" class="btn btn-default">Subscribe</button>
+	  </form>
+	  <div class="success-block"></div>
+	</div>
+      </div>
+    </div>
+  </div>
+
+    <div class="container" id="disqus_thread"></div>
+
+  <script type="text/javascript">
+    var disqus_shortname = 'vonpupp';
+
+    (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by
+      Disqus.</a></noscript>
+  
+    <div class="addthis_recommended_horizontal"></div>
+  
+          </div>
+    <!-- /.wrapper -->
+
+    <!-- FOOTER -->
+    <footer class="footer footer-dark">
+      <div class="container">
+
+	<hr />
+
+	<div class="row">
+	  <div class="col-sm-8">
+	    <p class="copyright">
+              This work is licensed under a
+              <a rel="license"
+                 href="//creativecommons.org/licenses/by-sa/3.0/deed.en_US">Creative
+                Commons Attribution-ShareAlike 3.0 Unported License</a>.
+            </p>
+	  </div>
+	  <div class="col-sm-4 text-right">
+	    <nav>
+	      Follow Me
+          <div class="addthis_horizontal_follow_toolbox"
+               style="float: right;">
+          </div>
+	    </nav>
+	  </div>
+	</div>
+      </div>
+    </footer>
+    <!-- /.footer -->
+
+    <!-- ScrollTop -->
+    <a href="#" class="scrolltop"><i></i></a>
+
+    
+          <!-- SCRIPTS -->
+    <script src="/media/js/jquery-2.1.3.min.js"></script>
+    <script src="/media/js/bootstrap.min.js"></script>
+    <script src="/media/js/plugins.js"></script>
+    <script src="/media/js/custom.js"></script>
+    <script src="/media/js/bootstrap-tab-bookmark.js"></script>
+
+    
+    
+
+    <!-- Go to www.addthis.com/dashboard to customize your tools -->
+  <script type="text/javascript"
+    src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5626d7f3b1c34ff8"
+    async="async">
+  </script>
+  
+    <script type="text/javascript">
+    var disqus_shortname = 'vonpupp';
+
+    (function () {
+      var s = document.createElement('script'); s.async = true;
+      s.type = 'text/javascript';
+      s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+      (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+  </script>
+  
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+  
+  </body>
+</html>

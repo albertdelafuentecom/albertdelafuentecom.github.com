@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <title>
+        How to manually boot/recover a system with LUKS and LVM
+        | Albert De La Fuente
+    </title>
+    <!-- >    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
+     -->
+        <link href="/media/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/media/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/media/css/animate.css" rel="stylesheet">
+    <link href="/media/css/style.css" rel="stylesheet">
+    <link href="/media/css/style-custom.css" rel="stylesheet">
+    <link href="/media/css/pygments.css" rel="stylesheet">
+    <link href="/media/css/flag-icon.min.css" rel="stylesheet">
+        
+        <link href="/en/blog/2016/2016-11-13-gpg-pka-howto.html" rel="prev">
+        
+        <link rel="alternate" type="application/rss+xml"
+          href="/blog/index.xml" title="albert:/dev/blog">
+    
+            <meta property="og:title" content="How to manually boot/recover a system with LUKS and LVM">
+    <meta property="og:description" content="I have been using LVM on top of LUKS for more than 2 years without problems. However since I haven&#39;t had the chance to troubleshoot these technologies in the past I was quite concerned of what would …">
+    <meta property="og:image" content="http://www.albertdelafuente.com/media/images/blog/2016/2016-11-22-141444_2720x1024_scrot.png">
+
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:site" content="@vonpupp"/>
+    <meta name="twitter:image:src" content='http://www.albertdelafuente.com/media/images/blog/2016/2016-11-22-141444_2720x1024_scrot.png'/>
+    <meta name="twitter:title" content="How to manually boot/recover a system with LUKS and LVM"/>
+    <meta name="twitter:domain" content="albertdelafuente.com"/>
+    <meta name="twitter:description" content="I have been using LVM on top of LUKS for more than 2 years without problems. However since I haven&#39;t had the chance to troubleshoot these technologies in the past I was quite concerned of what would …"/>
+                <script type="text/javascript">
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-27656036-2', 'auto', {'allowLinker': true});
+      ga('send', 'pageview');
+    </script>
+          </head>
+  <body class="archive">
+        <!-- HEADER -->
+    
+    <header class="header header-dark no-sticky">
+      <nav class="navbar container">
+	<div class="navbar-header">
+          <button class="navbar-toggle collapsed" data-target="#navbar" data-toggle="collapse" type="button">
+	    <span class="icon-bar"></span>
+	    <span class="icon-bar"></span>
+	    <span class="icon-bar"></span>
+	  </button>
+	  <a class="navbar-brand" href="/">
+            <img src="/media/images/about/me.jpg"
+                 class="img-circle img-thumbnail"
+                 alt="Albert De La Fuente">
+            Albert De La Fuente
+          </a>
+        </div>
+	<div id="navbar" class="navbar-collapse collapse">
+	  <ul class="nav navbar-nav pull-right">
+                                                                        <li>
+              <a href="/en/about">
+                                <span class="glyphicon glyphicon-user"></span>
+                                About
+              </a>
+            </li>
+                                    <li class="active">
+              <a href="/en/blog">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                                Blog
+              </a>
+            </li>
+                                    <li>
+              <a href="/en/tags">
+                                
+              </a>
+            </li>
+            <!--    <li>
+    <div id="lf-menubar">
+      <form id="lf-search" action="//www.google.com/search">
+        <i id="lf-search-glass"><input type="submit" class="lf-sprite-search" value=""></i>
+        <input type="hidden" name="hl" value="en">
+	    <input type="hidden" name="q"  value="site:albertdelafuente.com/en/*">
+	    <input id="lf-search-query" type="text" name="q" value="">
+      </form>
+    </div>
+    </li> -->
+          </ul>
+	</div>
+
+  
+      </nav>
+    </header>
+
+<!--  vim: set filetype=htmldjango: -->    <!-- /.header -->
+
+    <!-- WRAPPER -->
+    <div class="wrapper">
+
+                  <div class="headcontent headcontent-md bg-sl-center overlay"
+           style="background-image: url('/media/images/blog/2016/2016-11-22-141444_2720x1024_scrot.png');">
+	<div class="container inforow">
+	  <div class="col-sm-10">
+	    <h1 class="white">
+                  How to manually boot/recover a system with LUKS and LVM
+                  </h1>
+	  </div>
+	  <div class="col-sm-2 text-right">
+	    <ol class="breadcrumb breadcrumb-arrow">
+                                                                                                  <li>
+                <a href="/en/blog">
+                                    Blog
+                </a>
+              </li>
+                                                        <li class="active">
+                <a href="/en/blog/2016">
+                                    2016
+                </a>
+              </li>
+                            	    </ol>
+          </div>
+        </div>
+      </div>
+
+        <div class="container post">
+    <header class="entry-header">
+      <div class="meta">
+        <small><i class="fa fa-calendar"></i>Tuesday 22 November 2016</small>
+        <small>
+          <i class="fa fa-folder"></i>
+                                            <a href="/en/tags/arch.html">
+            </a>
+            ,                                  <a href="/en/tags/system.html">
+            </a>
+                              </small>
+                <a href="http://www.albertdelafuente.com/en/blog/2016/2016-11-22-manually-boot-luks-on-lvm.html#disqus_thread">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+                <span>
+          <i class="fa fa-user-plus"></i> 
+        </span>
+                <div class="addthis_horizontal_follow_toolbox"
+             style="margin-top: -25px;
+             margin-left: -25px;">
+        </div>
+              </div>
+    </header>
+    <div class="entry-content padding-bottom">
+            <h2>Intro</h2>
+<p>I have been using LVM on top of LUKS for more than 2 years without problems.
+However since I haven't had the chance to troubleshoot these technologies in
+the past I was quite concerned of what would happen when I would have problems.
+Today my main computer didn't boot up and I had to fix it manually. This
+post shows the steps I performed to recover my system.</p>
+<p>I use Arch Linux and I prepared a <a href="https://github.com/vonpupp/arch-installer/tree/feature/efi-crypt">repository with my custom install method</a>
+based on archinstaller. Basically I have a custom partitioning based on LVM on
+top of LUKS and some variables to start he installing method.</p>
+<p>Here is an overview of the parts on this tutorial:</p>
+<h2>Tutorial overview</h2>
+<ol>
+<li>Create a bootable USB and boot the broken system with it (AKA recovery mode)</li>
+<li>Chroot into the system</li>
+<li>Fix the issue</li>
+</ol>
+<h2>Assumptions</h2>
+<p>I will assume that the error is similar as mine. After opening the LUKS device,
+I had the following problem:
+<code>ERROR: device /dev/mapper/storage-root not found</code>.</p>
+<h2>Create a bootable USB</h2>
+<p>To create a bootable USB you need to download the latest Arch Linux iso and
+then us <code>dd</code> to dump it to a flash drive.</p>
+<div class="highlight"><pre><span></span>dd <span class="nv">bs</span><span class="o">=</span>4M <span class="k">if</span><span class="o">=</span>/path/to/archlinux.iso <span class="nv">of</span><span class="o">=</span>/dev/sdx <span class="nv">status</span><span class="o">=</span>progress <span class="o">&amp;&amp;</span> sync<br /></pre></div>
+
+<p><br />
+After completion, use the same flash drive to boot the broken computer. You
+generally need to hit a key on the <code>F5</code> - <code>F6</code> range to choose the boot method.</p>
+<h2>Chroot into the system</h2>
+<p>Once the system has booted, now we need to mount everything the system would
+mount on a boot stage.  Adapt the LUKS label and LVM devices according to your
+needs.</p>
+<div class="highlight"><pre><span></span><span class="c1"># Open the LUKS device.</span><br />cryptsetup luksOpen /dev/disk/by-partlabel/cryptlvm lvm<br />&nbsp;<br /><span class="c1"># Mount the root partition</span><br />mount /dev/storage/root /mnt<br />&nbsp;<br /><span class="c1"># Mount the boot partition</span><br />mount /dev/sda1 /mnt/boot<br />&nbsp;<br /><span class="c1"># Mount proc, sys and dev</span><br />mount -t proc proc proc/<br />mount -t sysfs sys sys/<br />mount -o <span class="nb">bind</span> /dev dev/<br />&nbsp;<br /><span class="c1"># Switch to bash</span><br />bash<br />&nbsp;<br /><span class="c1"># Chroot</span><br />chroot /mnt<br />&nbsp;<br /><span class="c1"># Bring up network if needed</span><br />dhcpcd eth0<br /></pre></div>
+
+<p><br />
+At this point you should have shell with a recovery environment set to fix the
+issue, so let's fix it.</p>
+<h2>Fix the issue</h2>
+<p>To fix the issue we basically are going to perform an upgrade an recreate the
+initial ramdisk</p>
+<div class="highlight"><pre><span></span><span class="c1"># Update the packages database</span><br />pacman -Syy<br />&nbsp;<br /><span class="c1"># Upgrade the packages</span><br />pacman -Syu<br />&nbsp;<br /><span class="c1"># Update udev package</span><br />pacman -S udev<br />&nbsp;<br /><span class="c1"># Update mkinitcpio package</span><br />pacman -S mkinitcpio<br />&nbsp;<br /><span class="c1"># Recreate the initial ramdisk</span><br />mkinitcpio -p linux<br />&nbsp;<br /><span class="c1"># Exit the chroot environment</span><br /><span class="nb">exit</span><br />&nbsp;<br /><span class="c1"># Reboot</span><br />reboot<br /></pre></div>
+
+<p><br />
+If everything went well, you now should be able to boot the system properly.</p>
+<h2>Conclusions</h2>
+<p>I was quite worried about how to solve this issue due to the several layers of
+complexity: GPT, LUKS and LVM, however everything went out quite smoothly. The
+key part is to use a USB flash drive and then mount the boot and root
+partitions to recreate the ramdisk.</p>
+<p>Thanks for reading. Spot an error or want to explain something better, feel
+free to send me a PR.</p>
+<!--  vim: set spell: -->
+
+<!--  vim: set spelllang=en: -->
+
+<!--  vim: set filetype=htmldjango: -->          </div>
+
+      </div>
+
+  <div id="subscribe" class="newsletter bg-sl-center overlay overlay-light"
+       style="background-image: url('/media/images/services/photo-notepad.jpg');">
+    <div class="container inforow middle">
+      <div class="col-sm-6">
+	<p>Get notified of my next blog post</p>
+      </div>
+      <div class="col-sm-6">
+	<div id="feedback-form">
+	  <form action="//albertdelafuente.us12.list-manage.com/subscribe/post?u=2078b40de4d18256fef954d6e&amp;id=bdd2d44f54" method="post">
+	    <input name="EMAIL" placeholder="Enter your email address" required type="email">
+	    <button type="submit" class="btn btn-default">Subscribe</button>
+	  </form>
+	  <div class="success-block"></div>
+	</div>
+      </div>
+    </div>
+  </div>
+
+    <div class="container" id="disqus_thread"></div>
+
+  <script type="text/javascript">
+    var disqus_shortname = 'vonpupp';
+
+    (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the
+    <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by
+      Disqus.</a></noscript>
+  
+    <div class="addthis_recommended_horizontal"></div>
+  
+          </div>
+    <!-- /.wrapper -->
+
+    <!-- FOOTER -->
+    <footer class="footer footer-dark">
+      <div class="container">
+
+	<hr />
+
+	<div class="row">
+	  <div class="col-sm-8">
+	    <p class="copyright">
+              This work is licensed under a
+              <a rel="license"
+                 href="//creativecommons.org/licenses/by-sa/3.0/deed.en_US">Creative
+                Commons Attribution-ShareAlike 3.0 Unported License</a>.
+            </p>
+	  </div>
+	  <div class="col-sm-4 text-right">
+	    <nav>
+	      Follow Me
+          <div class="addthis_horizontal_follow_toolbox"
+               style="float: right;">
+          </div>
+	    </nav>
+	  </div>
+	</div>
+      </div>
+    </footer>
+    <!-- /.footer -->
+
+    <!-- ScrollTop -->
+    <a href="#" class="scrolltop"><i></i></a>
+
+    
+          <!-- SCRIPTS -->
+    <script src="/media/js/jquery-2.1.3.min.js"></script>
+    <script src="/media/js/bootstrap.min.js"></script>
+    <script src="/media/js/plugins.js"></script>
+    <script src="/media/js/custom.js"></script>
+    <script src="/media/js/bootstrap-tab-bookmark.js"></script>
+
+    
+    
+
+    <!-- Go to www.addthis.com/dashboard to customize your tools -->
+  <script type="text/javascript"
+    src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5626d7f3b1c34ff8"
+    async="async">
+  </script>
+  
+    <script type="text/javascript">
+    var disqus_shortname = 'vonpupp';
+
+    (function () {
+      var s = document.createElement('script'); s.async = true;
+      s.type = 'text/javascript';
+      s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+      (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+  </script>
+  
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+  
+  </body>
+</html>

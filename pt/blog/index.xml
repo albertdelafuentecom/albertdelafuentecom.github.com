@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:base="http://www.albertdelafuente.com">
+  <title>
+    albert:/dev/blog  </title>
+    <link href="http://www.albertdelafuente.com/pt/blog/index.xml" rel="self" />
+  
+    <link href="http://www.albertdelafuente.com/blog/"/>
+  
+    
+  <updated>2016-11-22T17:04:25Z</updated>
+
+  <id>http://www.albertdelafuente.com/pt/blog/index.xml</id>
+
+      <entry>
+    <title type="html">Redimensionando partições LVM em LUKS</title>
+    <author><name></name></author>
+    <link href="http://www.albertdelafuente.com/pt/blog/2015/resizing-lvm-on-luks.html"/>
+    <updated>2015-11-01T10:22:00Z</updated>
+    <published>2015-11-01T10:22:00Z</published>
+    <id>/pt/blog/2015/resizing-lvm-on-luks.html</id>
+        <category   scheme="/tags/"
+                term="System"
+                label="System" />
+    
+    <content type="html">
+                  &lt;h2&gt;Intro&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;cryptsetup luksOpen /dev/sda2 cryptlvm&lt;br /&gt;&amp;nbsp;&lt;br /&gt;e2fsck -f /dev/mapper/storage-home&lt;br /&gt;&amp;nbsp;&lt;br /&gt;resize2fs -p /dev/mapper/storage-home 200g&lt;br /&gt;&amp;nbsp;&lt;br /&gt;e2fsck -f /dev/mapper/storage-home&lt;br /&gt;&amp;nbsp;&lt;br /&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;lvdisplay&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;br /&gt;lvreduce -L -15G /dev/storage/home&lt;br /&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;lvdisplay&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;br /&gt;&amp;nbsp;&lt;br /&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;lvresize -l +100%FREE /dev/storate/root&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;br /&gt;&amp;nbsp;&lt;br /&gt;resize2fs /dev/mapper/storage-root&lt;br /&gt;&amp;nbsp;&lt;br /&gt;cryptsetup luksClose /dev/sda2 cryptlvm&lt;br /&gt;&amp;nbsp;&lt;br /&gt;&lt;br /&gt;&lt;span class=&#34;c1&#34;&gt;### NOT NEEDED&lt;/span&gt;&lt;br /&gt;&amp;nbsp;&lt;br /&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;pvdisplay&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;br /&gt;pvresize --sephysicalvolumesize 218G /dev/mapper/cryptlvm&lt;br /&gt;&amp;nbsp;&lt;br /&gt;/dev/mapper/cryptlvm is active and is in use&lt;br /&gt;  type:    LUKS1&lt;br /&gt;  cipher:  aes-xts-plain64&lt;br /&gt;  keysize: &lt;span class=&#34;m&#34;&gt;256&lt;/span&gt; bits&lt;br /&gt;  device:  /dev/sda2&lt;br /&gt;  offset:  &lt;span class=&#34;m&#34;&gt;4096&lt;/span&gt; sectors&lt;br /&gt;  size:    &lt;span class=&#34;m&#34;&gt;487981391&lt;/span&gt; sectors&lt;br /&gt;  mode:    read/write&lt;br /&gt;&amp;nbsp;&lt;br /&gt;&lt;span class=&#34;nv&#34;&gt;NEW_SECTORS&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; EXISTING_SECTORS * NEW_SIZE_IN_GB / EXISTING_SIZE_IN_GB&lt;br /&gt;&lt;span class=&#34;m&#34;&gt;487981391&lt;/span&gt; * 200.7 / 232.7   &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; 420876085&lt;br /&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;487981391&lt;/span&gt; - 15*1024*1024*2 &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; 456524111&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;br /&gt;&amp;nbsp;&lt;br /&gt;cryptsetup -b &lt;span class=&#34;m&#34;&gt;420876085&lt;/span&gt; resize cryptlvm&lt;br /&gt;&amp;nbsp;&lt;br /&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;cryptsetup status cryptlvm&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;br /&gt;&amp;nbsp;&lt;br /&gt;parted /dev/sda&lt;br /&gt;&amp;nbsp;&lt;br /&gt;resize&lt;br /&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;br /&gt;
+&lt;img src=&#34;http://xyne.archlinux.ca/etc/dyn/img/graphviz/Pacserve_Request_Flow_Chart.svg&#34;&gt;&lt;/p&gt;
+&lt;!--  vim: set spell: --&gt;
+
+&lt;!--  vim: set spelllang=pt: --&gt;
+
+&lt;!--  vim: set filetype=markdown: --&gt;      
+          </content>
+  </entry>
+  
+
+
+</feed>
